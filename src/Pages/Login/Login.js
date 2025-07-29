@@ -1,39 +1,60 @@
-import { useNavigation } from '@react-navigation/native';
-import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, Button, Alert } from 'react-native';
 import loginStyle from '../../Styles/loginStyle';
+import { useState } from 'react';
+import axios from 'axios'
+import { useNavigation } from '@react-navigation/native';
 
 const Login = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [formData, setFormData] = useState({
+        username: "",
+        password: ""
+    })
     const navigation = useNavigation();
-    const handleLogin = () => {
-        navigation.navigate('Home');
-    };
+
+    const handleChange = (name, value) => {
+        setFormData({
+            ...formData,
+            [name]: value
+        })
+    }
+
+    const submitHandler = async () => {
+        try {
+            const { data } = await axios({
+                url: `https://vodafone.myindiabazar.com/api/admin/login`,
+                method: 'POST',
+                headers: {
+                    "content-type": "application/json",
+                },
+                data: {
+                    ...formData
+                }
+            })
+            Alert.alert("login success");
+            navigation.navigate('Signup')
+        } catch (error) {
+            console.log("Error ::>>", error);
+        }
+    }
 
     return (
         <View style={loginStyle.container}>
-            <Text style={loginStyle.title}>Login</Text>
-
+            <Text style={loginStyle.title}>
+                Sign In
+            </Text>
             <TextInput
                 style={loginStyle.input}
-                placeholder="Email"
-                keyboardType="email-address"
-                value={email}
-                onChangeText={setEmail}
+                placeholder='Enter email'
+                onChangeText={(value) => handleChange('username', value)}
+                value={formData?.username}
             />
-
             <TextInput
                 style={loginStyle.input}
-                placeholder="Password"
-                secureTextEntry
-                value={password}
-                onChangeText={setPassword}
+                placeholder='Enter password'
+                onChangeText={(value) => handleChange('password', value)}
+                value={formData?.password}
             />
-
-            <TouchableOpacity style={loginStyle.button} onPress={handleLogin}>
-                <Text style={loginStyle.buttonText}>Login</Text>
-            </TouchableOpacity>
+            <Button style={loginStyle.button} onPress={submitHandler} title='Sign In' />
         </View>
     );
 }
