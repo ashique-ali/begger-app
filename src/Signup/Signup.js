@@ -54,21 +54,24 @@ const SignUp = () => {
                 <TextInput style={loginStyle.input} placeholder="Search here..." value={searchValue} onChangeText={(value) => setSearchValue(value)} />
             </View>
 
-            {/* Table Header */}
-            <View style={[styles.row, styles.header]}>
-                <Text style={[styles.cell, styles.headerText]}>#</Text>
-                <Text style={[styles.cell, styles.headerText]}>Title</Text>
-                <Text style={[styles.cell, styles.headerText]}>Price</Text>
-            </View>
-
-            {/* Table Rows */}
-            {filteredProducts.map((item, index) => (
-                <View key={item.id} style={styles.row}>
-                    <Text style={styles.cell}>{index + 1}</Text>
-                    <Text style={styles.cell}>{item.title}</Text>
-                    <Text style={styles.cell}>${item.price}</Text>
-                </View>
-            ))}
+           <FlatList
+                data={filteredProducts}
+                keyExtractor={(item) => item.id.toString()}
+                ListHeaderComponent={() => (
+                    <View style={[styles.row, styles.header]}>
+                        <Text style={[styles.cell, styles.headerText]}>#</Text>
+                        <Text style={[styles.cell, styles.headerText]}>Title</Text>
+                        <Text style={[styles.cell, styles.headerText]}>Price</Text>
+                    </View>
+                )}
+                renderItem={({ item, index }) => (
+                    <View style={styles.row}>
+                        <Text style={styles.cell}>{index + 1}</Text>
+                        <Text style={styles.cell}>{item.title}</Text>
+                        <Text style={styles.cell}>${item.price}</Text>
+                    </View>
+                )}
+            />
         </ScrollView>
     );
 };
